@@ -2,20 +2,33 @@
 import sys
 import json
 import yaml
+import argparse
 import requests
 from crtsh import *
 from bufferover_run import *
 from securitytrails import *
 
-domain_list = sys.argv[1]
-yaml_config = sys.argv[2]
+# Arguments
+parser = argparse.ArgumentParser(description="Accepts domains from stdin and finds subdomains for each domain")
+parser.add_argument("-c", "--config", required=True, help="Path to your config.yaml")
+
+args = parser.parse_args()
+yaml_config = args.config
+
+# Read domains from stdin
+try:
+    domain_list = []
+    for line in sys.stdin:
+        domain_list.append(line)
+except KeyboardInterrupt as e:
+    print("\n")
+    sys.exit(1)
 
 def pull_subs(domain):
     try:
         with open(yaml_config, 'r') as f:
             yaml_data = yaml.safe_load(f)
         api_key = yaml_data["securitytrails"][0]
-        print(f"[DEBUG] YOUR SECURITY TRAILS API KEY IS {api_key}")
         securitytrails(domain, api_key)
 
         # crt.sh
@@ -28,10 +41,6 @@ def pull_subs(domain):
         sys.exit(2)
 
 if __name__ == "__main__":
-    # domain list
-    with open(domain_list, "r") as f:
-        domains = f.readlines()
-
-    for domain in domains:
-        #print(f"{domain.strip()}")
+    for domain in domain_list:
         pull_subs(domain.strip())
+
