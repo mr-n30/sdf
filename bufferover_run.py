@@ -10,6 +10,8 @@ def bufferover_run(domain):
 
         for x in json_data["FDNS_A"]:
             y = x.split(",")
-            print(y[1])
+            if '*' not in y[1]:
+                if f".{domain}" in y[1]:
+                    print(f"{y[1].lower()}")
     except:
         pass

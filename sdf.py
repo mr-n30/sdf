@@ -20,6 +20,7 @@ try:
     domain_list = []
     for line in sys.stdin:
         domain_list.append(line)
+
 except KeyboardInterrupt as e:
     print("\n")
     sys.exit(1)
